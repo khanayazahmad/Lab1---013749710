@@ -88,18 +88,8 @@ module.exports.getAll= function(cb){
 module.exports.search = function(filters, cb){
 
     const where = {};
-    if(filters.cuisine){
-        where.cuisine = {
-            $or: _.isArray(filters.cuisine)?filters.cuisine:[filters.cuisine]
-        }
-    }
-    if(filters.zip){
-        where.zip = {
-            $or: _.isArray(filters.zip)?filters.zip:[filters.zip]
-        }
-    }
 
-    const filteredSearchResults = [];
+    var filteredSearchResults = [];
 
         repository.Restaurant.findAll({
             where:where
@@ -107,20 +97,33 @@ module.exports.search = function(filters, cb){
             if(!(restaurants && _.isArray(restaurants) && restaurants.length > 0)){
                 return cb();
             }
-            let results = fuzz.extract(filters.name, restaurants.map(res=>res.name), {returnObjects: true})
-                              .map(res => ({[res.choice]:res.score}));
 
-            filteredSearchResults = filteredSearchResults.concat(restaurants.filter(res => results[res.name] > 60));
+            restaurants=restaurants.map(restaurant => ({
+                id:restaurant.id,
+                name:restaurant.name,
+                cuisine:restaurant.cuisine,
+                zip:restaurant.zip,
+                data:restaurant.data         
+            }) )
+            
 
-            menuService.getByRestaurantIds(restaurants.map(res=>res.id), function(err, menus){
+            if(filters.name == ''){
+                return cb(null, restaurants);
+            }
+            
+
+            filteredSearchResults = restaurants.filter(res => res.name.trim().toLowerCase().includes(filters.name.trim().toLowerCase()));
+
+            return menuService.getByRestaurantIds(restaurants.map(res=>res.id), function(err, menus){
                 filteredSearchResults = filteredSearchResults.concat(restaurants.filter(res => {
                     let menu = menus.filter(menu => menu.restaurantId === res.id);
                     menu = menu.length > 0? menu[0]:null;
                     if(menu && menu.items && _.isArray(menu.items) && menu.items.length>0){
-                        return fuzz.extract(filters.name, menu.items.map(res=>res.name?res.name:''))[0][2] > 80;
+                        return menu.items.filter(res => res.name.trim().toLowerCase().includes(filters.name.trim().toLowerCase())).length;
                     }
                     return false;
-                }))
+                }));
+                return cb(null, filteredSearchResults);
             })
 
 

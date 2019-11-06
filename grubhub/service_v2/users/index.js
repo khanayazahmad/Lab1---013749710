@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const repository = require('../../repository');
+const repository = require('../../repository_mongo');
 const orderService = require('../order')
 
 module.exports.create = function(newUser, cb){
@@ -16,7 +16,7 @@ module.exports.create = function(newUser, cb){
                 email:newUser.email,
                 password:newUser.password,
                 role:newUser.role,
-                data:newUser.data?newUser.data:null
+                data:newUser.data?newUser.data:{}
             }).then(function(user){
 
                 return cb(null,{message:"USER SUCCESSFULLY REGISTERED"});
@@ -32,12 +32,12 @@ module.exports.create = function(newUser, cb){
 module.exports.update = function(newUser, cb){
 
             return repository.User.update({
+                _id: newUser.id
+            },{
                 name:newUser.name,
                 email:newUser.email,
                 data:newUser.data?newUser.data:null
-            }, {where:{
-                id: newUser.id
-            }}).then(function(user){
+            }).then(function(user){
 
                 return module.exports.getById(newUser.id,cb);
                 
@@ -75,11 +75,8 @@ module.exports.verifyAndAssignToken =  function(credentials, user, cb){
 }
 
 module.exports.getById = function(userId, cb){
-    repository.User.findOne({
-        where:{
-            id: userId
-        }
-    }).then(function(user){
+    repository.User.findById(userId)
+    .then(function(user){
 
         return orderService.getCartByUserId(user.id, function(err, cart){
             
@@ -102,9 +99,7 @@ module.exports.getById = function(userId, cb){
 
 module.exports.getByEmail = function(email, cb){
     repository.User.findOne({
-        where:{
             email: email
-        }
     }).then(function(user){
         if(user){
         return orderService.getCartByUserId(user.id, function(err, cart){

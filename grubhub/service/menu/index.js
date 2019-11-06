@@ -89,11 +89,16 @@ module.exports.getByRestaurantIds = function (restaurantIds, cb) {
             }
         }
     }).then(function (menus) {
-        if (!(menu && _.isArray(menu) && menu.length > 0)) {
+        if (!(menus && _.isArray(menus) && menus.length > 0)) {
             return cb();
         }
 
-        repository.Item.findAll({
+        menus=menus.map(menu => ({
+            id: menu.id,
+            restaurantId: menu.restaurantId
+        }) )
+
+        return repository.Item.findAll({
             where: {
                 menuId: {
                     $or: menus.map(menu => menu.id)
@@ -101,8 +106,9 @@ module.exports.getByRestaurantIds = function (restaurantIds, cb) {
             }
         }).then(function (items) {
             const results = [];
-            async.forEachOfSeries(menus, function (menu, idx, icb) {
-                results.push({ ...menu, items: items.filter(item => item.menuId === menu.id) });
+            return async.forEachOfSeries(menus, function (menu, idx, icb) {
+                results.push({ ...menu, items: items.filter(item => item.menuId == menu.id).map(item => ({name:item.name})) });
+                return icb();
             }, function (err) {
                 if (err) {
                     return cb(err);
@@ -122,7 +128,7 @@ module.exports.getByRestaurantIds = function (restaurantIds, cb) {
 module.exports.addItem = function (item, cb) {
     repository.Item.create({
         name: item.name,
-        category: item.category,
+        category: item.category.toUpperCase().trim(),
         price: _.isNumber(item.price) ? item.price : parseFloat(item.price),
         menuId: item.menuId,
         image: item.image,
