@@ -28,8 +28,9 @@ class RegisterModal extends Component {
   componentDidUpdate(prevProps) {
     const { error, isAuthenticated, auth } = this.props;
     if (error !== prevProps.error) {
-      // Check for register error
+
       if (error.id === 'REGISTER_FAIL') {
+        alert("Invalid entries! Please try again");
         this.setState({ msg: error.msg });
       } else {
         this.setState({ msg: auth && auth.message ? auth.message : null, modal:true });

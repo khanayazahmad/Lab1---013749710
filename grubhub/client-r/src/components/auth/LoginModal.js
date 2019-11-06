@@ -26,7 +26,7 @@ class LoginModal extends Component {
     if (error !== prevProps.error) {
       // Check for register error
       if (error.id === 'LOGIN_FAIL') {
-        this.setState({ msg: error.msg.message });
+        this.setState({ msg: 'LOGIN_FAIL'});
       } else {
         this.setState({ msg: null });
       }
@@ -103,7 +103,7 @@ class LoginModal extends Component {
                             </Link>
                           </Col>
                           <Col xs="6" className="text-right">
-                          <Link to="/register">
+                          <Link to="/register_owner">
                               <Button Button color="link" className="px-0">Register as Restaurant Owner!</Button>
                           </Link>
                           </Col>

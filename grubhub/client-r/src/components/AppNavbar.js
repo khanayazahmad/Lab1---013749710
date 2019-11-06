@@ -66,7 +66,7 @@ class AppNavbar extends Component {
     );
 
     return (
-      <div>
+      <React.Fragment>
         <Navbar color='danger' dark expand='sm' className='mb-5' style={{
   position: "fixed",
   top: 0,
@@ -85,7 +85,7 @@ class AppNavbar extends Component {
             </Collapse>
           </Container>
         </Navbar>
-      </div>
+      </React.Fragment>
     );
   }
 }

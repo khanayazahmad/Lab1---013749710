@@ -5,7 +5,7 @@ import { loadUser } from './actions/authActions';
 
 import {BrowserRouter} from 'react-router-dom';
 import Router from './Router';
-
+import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 class App extends Component {
