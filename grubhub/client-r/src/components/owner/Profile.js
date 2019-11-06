@@ -42,7 +42,7 @@ class Profile extends Component {
             }
         };
         if (token) {
-            config.headers['x-auth-token'] = token;
+            config.headers['Authorization'] = token;
         }
     
         return config;
@@ -57,7 +57,7 @@ class Profile extends Component {
                             <h4>{this.state.user.name}</h4>
                         </Col>
                         <Col className="text-right">
-                            <h4><Badge color="success">CUSTOMER</Badge></h4>
+                            <h4><Badge color="success">OWNER</Badge></h4>
                         </Col>
                     </Row>
                 </CardHeader>
@@ -114,7 +114,7 @@ class Profile extends Component {
                     'accept': 'application/json',
                     'Accept-Language': 'en-US,en;q=0.8',
                     'Content-Type': `multipart/form-data; boundary=${data._boundary}`,
-                    'x-auth-token': localStorage.getItem('token')
+                    'Authorization': localStorage.getItem('token')
                 }
             })
                 .then((response) => {

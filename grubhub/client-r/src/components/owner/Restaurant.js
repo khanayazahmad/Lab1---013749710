@@ -40,7 +40,7 @@ class Restaurant extends Component {
             }
         };
         if (token) {
-            config.headers['x-auth-token'] = token;
+            config.headers['Authorization'] = token;
         }
 
         return config;
@@ -87,7 +87,7 @@ class Restaurant extends Component {
                     'accept': 'application/json',
                     'Accept-Language': 'en-US,en;q=0.8',
                     'Content-Type': `multipart/form-data; boundary=${data._boundary}`,
-                    'x-auth-token': localStorage.getItem('token')
+                    'Authorization': localStorage.getItem('token')
                 }
             })
                 .then((response) => {
@@ -143,7 +143,7 @@ class Restaurant extends Component {
                     'accept': 'application/json',
                     'Accept-Language': 'en-US,en;q=0.8',
                     'Content-Type': `multipart/form-data; boundary=${data._boundary}`,
-                    'x-auth-token': localStorage.getItem('token')
+                    'Authorization': localStorage.getItem('token')
                 }
             })
                 .then((response) => {
@@ -316,7 +316,7 @@ class Restaurant extends Component {
         else {
             if (!this.state.edit) {
                 return (<div className="app flex-row align-items-center">
-                    <Container style={{ marginTop: 100 + 'px' }}>
+                    <Container style={{ marginTop: 100 + 'px' , "maxWidth":"none"}}>
                         <Row className="justify-content-center">
                             <Col>
                                 <Card className="text-center">
@@ -324,9 +324,9 @@ class Restaurant extends Component {
                                         <h1>{this.state.restaurant.name ? this.state.restaurant.name : ''}</h1>
                                         <p className="text-muted">An {this.state.restaurant.cuisine.toLowerCase()} restaurant located in {this.state.restaurant.zip}</p>
                                     </CardHeader>
-                                    <CardBody className="p-4">
+                                    <CardBody className="p-0">
                                         {this.state.restaurant.data && this.state.restaurant.data.img ?
-                                            (<CardImg src={this.state.restaurant.data.img} height={275 + "px"} width={100 + "px"}></CardImg>) : (<MdRestaurant />)}
+                                            (<div style={{background: `url(${this.state.restaurant.data.img})`, backgroundPosition:'center',left:0,right:0}}><div style={{left:0,right:0,height:200+'px'}}></div></div>) : (<MdRestaurant />)}
                                     </CardBody>
                                     <CardFooter>
                                         <Button color="primary" onClick={(e) => {
@@ -347,7 +347,7 @@ class Restaurant extends Component {
             }
             else {
                 return (<div className="app flex-row align-items-center">
-                    <Container style={{ marginTop: 100 + 'px' }}>
+                    <Container style={{ marginTop: 100 + 'px', "maxWidth" : "none" }}>
                         <Row className="justify-content-center">
                             <Col md="9" lg="7" xl="6">
                                 <Card className="mx-4">

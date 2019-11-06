@@ -44,7 +44,7 @@ class Dashboard extends Component {
         }
     };
     if (token) {
-        config.headers['x-auth-token'] = token;
+        config.headers['Authorization'] = token;
     }
 
     return config;
@@ -159,12 +159,12 @@ getSideBar = () => {
             <h2>No Restaurants in your area</h2>
             </Container>)
     return (
-      <div>
+      <React.Fragment>
         {this.getSideBar()}
-              <Container style={{"paddingTop":"30px", "paddingLeft":"10%"}}>
+              <div className="col-lg-12 custom-div-class" style={{"paddingTop":"30px", "paddingLeft":"10%"}}>
                 {this.switch()}
-              </Container>
-      </div>
+              </div>
+      </React.Fragment>
     );
   }
 }

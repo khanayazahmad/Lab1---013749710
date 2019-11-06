@@ -28,7 +28,7 @@ class AddItem extends Component {
                     'accept': 'application/json',
                     'Accept-Language': 'en-US,en;q=0.8',
                     'Content-Type': `multipart/form-data; boundary=${data._boundary}`,
-                    'x-auth-token': localStorage.getItem('token')
+                    'Authorization': localStorage.getItem('token')
                 }
             })
                 .then((response) => {
@@ -46,7 +46,7 @@ class AddItem extends Component {
     };
 
     render() {
-        return (<Col>
+        return (<Col className="col-12">
             <Card className="mx-4" >
                 <CardHeader>
                     <h5 className="text-muted">Add new item ...</h5>
