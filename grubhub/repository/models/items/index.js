@@ -14,7 +14,7 @@ module.exports = function (sequelize, DataTypes) {
 			}
         },
         category: {
-			type: DataTypes.ENUM('BREAKFAST','LUNCH','APPETIZER'),
+			type: DataTypes.TEXT,
 			allowNull: false
 		},
         image: {

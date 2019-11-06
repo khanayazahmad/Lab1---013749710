@@ -1,10 +1,10 @@
 const Sequelize       = require('sequelize');
-const UserModel       = require('../models/users');
-const ItemModel       = require('../models/items');
-const MenuModel       = require('../models/menu');
-const OrderModel      = require('../models/orders');
-const RestaurantModel = require('../models/restaurants');
-const CartModel       = require('../models/cart');
+const UserModel       = require('./models/users');
+const ItemModel       = require('./models/items');
+const MenuModel       = require('./models/menu');
+const OrderModel      = require('./models/orders');
+const RestaurantModel = require('./models/restaurants');
+const CartModel       = require('./models/cart');
 
   const Op = Sequelize.Op;
 	const operatorsAliases = {
@@ -44,8 +44,8 @@ const CartModel       = require('../models/cart');
 	    $col: Op.col
 	};
 
-const sequelize = new Sequelize('grubhub', 'root', 'welcome123', {
-  host: 'localhost',
+const sequelize = new Sequelize('grubhub', 'admin', 'welcomegrubhub', {
+  host: 'cmpe273.czohryfydiej.us-west-1.rds.amazonaws.com',
   dialect: 'mysql',
   port: '3306',
   operatorsAliases: operatorsAliases,

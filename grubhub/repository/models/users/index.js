@@ -14,7 +14,7 @@ module.exports = function (sequelize, DataTypes) {
 			}
 		},
 		email: {
-			type: DataTypes.STRING(1000),
+			type: DataTypes.STRING(500),
 			allowNull: false,
 			validate: {
 				notEmpty: true,
