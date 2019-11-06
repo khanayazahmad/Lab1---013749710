@@ -39,7 +39,7 @@ class Cart extends Component {
             }
         };
         if (token) {
-            config.headers['x-auth-token'] = token;
+            config.headers['Authorization'] = token;
         }
 
         return config;
@@ -89,7 +89,9 @@ class Cart extends Component {
 
             },
             data: {
-                items: this.state.cart.data.items
+                items: this.state.cart.data.items,
+                user:this.props.auth.user.name,
+                restaurant:this.state.cart.data.restaurant?this.state.cart.data.restaurant:'Restaurant'
             },
             userId: this.state.cart.userId,
             restaurantId: this.state.cart.restaurantId
@@ -146,7 +148,7 @@ class Cart extends Component {
 
                                     </Col>
                                     <Col xs="6" className="text-right">
-                                        <Link to="#">
+                                        <Link to="/">
                                             <Button color="link" className="px-0">Go Back ...</Button>
                                         </Link>
                                     </Col>

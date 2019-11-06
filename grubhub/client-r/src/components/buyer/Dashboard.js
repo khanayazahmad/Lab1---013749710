@@ -20,7 +20,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Restaurant from './Restaurant';
 import { tokenConfig } from '../../actions/authActions';
-
+import {IoIosArrowDropleftCircle, IoIosArrowDroprightCircle } from "react-icons/io";
 import Cart from './Cart';
 import Order from './Order';
 import Profile from './Profile'
@@ -28,7 +28,9 @@ import Profile from './Profile'
 class Dashboard extends Component {
   state = {
         restaurants: null,
-        view: 'Restaurant'
+        view: 'Restaurant',
+        offset:0,
+        limit:3
   };
 
 
@@ -46,7 +48,7 @@ class Dashboard extends Component {
         }
     };
     if (token) {
-        config.headers['x-auth-token'] = token;
+        config.headers['Authorization'] = token;
     }
 
     return config;
@@ -54,9 +56,11 @@ class Dashboard extends Component {
 
 switch= () => {
   if(this.state.view == 'Restaurant'){
-    return this.state.restaurants?(<Restaurant restaurants={this.state.restaurants}/>):(<Container>
-      <h2>No Restaurants in your area</h2>
-      </Container>);
+    return (this.state.restaurants?(<Restaurant 
+    restaurants={this.state.restaurants}
+    setFilteredRestaurants = {this.setFilteredRestaurants}
+    getAllRestaurants ={this.getAllRestaurants}
+    getPagination = {this.getPagination}/>):<div>No restaurants available</div>);
   }else if(this.state.view == 'Cart'){
     return (<Cart />);
   }
@@ -148,7 +152,9 @@ getSideBar = () => {
     axios.get('restaurant/getAll', this.tokenConfig()).then(res => {
         if (res.data.restaurants) {
             this.setState({
-                restaurants: res.data.restaurants
+                restaurants: res.data.restaurants,
+                offset:0,
+                limit:3
             })
         } 
 
@@ -161,6 +167,66 @@ getSideBar = () => {
 
   };
 
+  getPrev = () => {
+    axios
+        .get(`restaurant/getAll?limit=3&offset=${(this.state.offset - this.state.limit)>=0?(this.state.offset - this.state.limit):0}`, this.tokenConfig())
+        .then(res => {
+            if (res.data.restaurants) {
+                var offset = (this.state.offset - this.state.limit)>=0?(this.state.offset - this.state.limit):0;
+                this.setState({
+                    restaurants: res.data.restaurants,
+                    offset:offset
+                })
+            }
+
+        })
+        .catch(err => {
+            console.log(err);
+        });
+}
+
+getNext = () => {
+    axios
+        .get(`/restaurant/getAll?limit=3&offset=${this.state.offset+ this.state.limit}`, this.tokenConfig())
+        .then(res => {
+            if (res.data.restaurants) {
+                var offset = (this.state.offset + this.state.limit)
+                this.setState({
+                    restaurants: res.data.restaurants,
+                    offset:offset
+                })
+            }
+
+        })
+        .catch(err => {
+            console.log(err);
+        });
+}
+
+
+  getPagination = () => {
+    return (
+      <Row className="justify-content-center align-items-center" style={{ marginLeft: 10 + 'px' }}>
+        <Col className="col-1">
+          <Button color="link" disabled={this.state.offset == 0} onClick={this.getPrev.bind(this)}><IoIosArrowDropleftCircle color="primary" size='100%' /></Button>
+        </Col>
+        <Col className="col-10"></Col>
+        <Col className="col-1">
+          <Button color="link" onClick={this.getNext.bind(this)}>
+            <IoIosArrowDroprightCircle color="primary" size='100%' /></Button>
+        </Col>
+      </Row>
+    );
+  }
+
+  setFilteredRestaurants = (restaurants) => {
+
+    this.setState({
+      restaurants: restaurants
+    });
+
+  };
+
   componentDidMount(){
       if(this.state.restaurants == null){
           this.getAllRestaurants();
@@ -170,15 +236,12 @@ getSideBar = () => {
 
   render() {
 
-        let restaurant = this.state.restaurants?(<Restaurant restaurants={this.state.restaurants}/>):(<Container>
-            <h2>No Restaurants in your area</h2>
-            </Container>)
     return (
       <div>
         {this.getSideBar()}
-              <Container style={{"paddingTop":"30px", "paddingLeft":"10%"}}>
+              <div style={{"paddingTop":"40px", "paddingLeft":"10%","width":"90%","maxWidth":"none"}}>
                 {this.switch()}
-              </Container>
+              </div>
       </div>
     );
   }

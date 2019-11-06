@@ -42,7 +42,7 @@ class Profile extends Component {
             }
         };
         if (token) {
-            config.headers['x-auth-token'] = token;
+            config.headers['Authorization'] = token;
         }
     
         return config;
@@ -114,7 +114,7 @@ class Profile extends Component {
                     'accept': 'application/json',
                     'Accept-Language': 'en-US,en;q=0.8',
                     'Content-Type': `multipart/form-data; boundary=${data._boundary}`,
-                    'x-auth-token': localStorage.getItem('token')
+                    'Authorization': localStorage.getItem('token')
                 }
             })
                 .then((response) => {
@@ -126,12 +126,13 @@ class Profile extends Component {
                     axios
                         .post('/user/update',newUser, this.tokenConfig())
                         .then(res => {
-                            if (res.data.data.user) {
+                            console.log(res.data);
+                            if (res.data.user) {
                                 alert("Profile updated successfully");
                                 store.dispatch(loadUser());
                                 this.setState({
                                     edit:false,
-                                    user:res.data.data.user
+                                    user:res.data.user
                                 });
                             }
 
@@ -149,12 +150,12 @@ class Profile extends Component {
             axios
                 .post('/user/update',newUser, this.tokenConfig())
                 .then(res => {
-                    if (res.data.data.user) {
+                    if (res.data.user) {
                         alert("Profile updated successfully");
                                 store.dispatch(loadUser());
                                 this.setState({
                                     edit:false,
-                                    user:res.data.data.user
+                                    user:res.data.user
                                 });
                     }
 
