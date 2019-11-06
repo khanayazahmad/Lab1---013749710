@@ -1,11 +1,17 @@
 const express = require('express');
 const router = express.Router();
-const auth = require('../auth')
+//const auth = require('../auth')
 const utils = require('../service/utils');
-const User = require('./users');
-const Restaurant = require('./restaurant');
+const User = require('../kafka-producer/user');
+const Restaurant = require('../kafka-producer/restaurant');
 const Menu = require('./menu');
-const Order = require('./order');
+const Order = require('../kafka-producer/order');
+const Conv = require('./conversation');
+
+var passport = require('passport');
+var auth = {userAuth:passport.authenticate('jwt', {session: false})};
+router.use(passport.initialize());
+require('../auth/passport')(passport);
 
 router.post('/img-upload', auth.userAuth, utils.uploadImage);
 
@@ -23,9 +29,13 @@ router.get('/restaurant/getByOwner/:ownerId', auth.userAuth, Restaurant.getResta
 
 router.post('/restaurant/update', auth.userAuth, Restaurant.updateRestaurants);
 
+router.post('/search', auth.userAuth, Restaurant.searchRestaurantsByFilter);
+
 router.get('/restaurant/getAll', auth.userAuth, Restaurant.getAllRestaurants);
 
 router.get('/menu/getByRestaurant/:restaurantId', auth.userAuth, Menu.getMenuByRestaurantId);
+
+router.get('/menu/:menuId/getByCat/:category', auth.userAuth, Menu.getMenuByCat);
 
 router.post('/menu/create/:restaurantId', auth.userAuth, Menu.createMenu);
 
@@ -42,7 +52,9 @@ router.post('/cart/addItem', auth.userAuth, Order.addToCart);
 router.post('/cart/update', auth.userAuth, Order.updateCart);
 
 router.post('/order/create', auth.userAuth, Order.createOrder);
+
 router.post('/order/update/:orderId', auth.userAuth, Order.updateOrderStatus);
+
 router.get('/order/getById/:orderId', auth.userAuth, Order.getOrder);
 
 router.get('/order/getByRestaurant/:restaurantId', auth.userAuth, Order.getOrdersByRestaurantId);
@@ -50,5 +62,7 @@ router.get('/order/getByRestaurant/:restaurantId', auth.userAuth, Order.getOrder
 router.get('/order/getByUser/:userId', auth.userAuth, Order.getOrdersByUserId);
 
 router.post('/order/cancel/:orderId', auth.userAuth, Order.cancelOrders);
+
+router.get('/chat/:channel', Conv.get);
 
 module.exports = router;

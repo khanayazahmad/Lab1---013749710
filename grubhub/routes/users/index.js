@@ -1,4 +1,4 @@
-const userService = require('../../service/users');
+const userService = require('../../service_v2/users');
 
 module.exports.register = function(request, response){
     if(!(request.body.name && request.body.email && request.body.role && request.body.password)){
@@ -45,7 +45,7 @@ module.exports.login = function(request, response){
             return response.send({
                 status: "ok",
                 data: {
-                    token,
+                    token:"bearer "+token,
                     user:{
                         id:user.id,
                         name:user.name,

@@ -1,4 +1,4 @@
-const restaurantService = require('../../service/restaurant');
+const restaurantService = require('../../service_v2/restaurant');
 const _ = require('lodash');
 
 module.exports.createRestaurant = function(request, response){
@@ -37,7 +37,7 @@ module.exports.getRestaurantByOwner = function(request, response){
     if(!(request.params && request.params.ownerId)){
         return response.status(400).send("INVALID REQUEST");
     }
-    restaurantService.getByOwnerId(_.isNumber(request.params.ownerId)?request.params.ownerId:parseInt(request.params.ownerId), function(err, data){
+    restaurantService.getByOwnerId(request.params.ownerId, function(err, data){
         if (err){
             return response.status(err.code ? err.code : 500).send(err);
         }
@@ -50,8 +50,16 @@ module.exports.getRestaurantByOwner = function(request, response){
 }
 
 module.exports.getAllRestaurants= function(request, response){
+    var pagination = {
+        skip:0,
+        limit:3
+    };
+
+    if(request.query.offset) pagination.skip = Number(request.query.offset);
+
+    if(request.query.limit) pagination.limit = Number(request.query.limit);
     
-    restaurantService.getAll( function(err, data){
+    restaurantService.getAll(pagination, function(err, data){
         if (err){
             return response.status(err.code ? err.code : 500).send(err);
         }
@@ -64,16 +72,25 @@ module.exports.getAllRestaurants= function(request, response){
 }
 
 module.exports.searchRestaurantsByFilter= function(request, response){
-    if(!(request.body && request.body.where && (request.body.where.name || request.body.where.cuisine || request.body.where.zip))){
+    if(!(request.body && request.body && (request.body.name || request.body.cuisine))){
         return response.status(400).send("INVALID REQUEST");
     }
-    restaurantService.search(request.body.where, function(err, data){
+    var pagination = {
+        skip:0,
+        limit:3
+    };
+
+    if(request.query.skip) pagination.skip = Number(request.query.skip);
+
+    if(request.query.limit) pagination.limit = Number(request.query.limit);
+
+    restaurantService.search(request.body, pagination, function(err, data){
         if (err){
             return response.status(err.code ? err.code : 500).send(err);
         }
         return response.send({
             status: "ok",
-            data: data
+            restaurants: data
         });
 
     });

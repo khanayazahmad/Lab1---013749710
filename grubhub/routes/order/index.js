@@ -1,4 +1,4 @@
-const orderService = require('../../service/order');
+const orderService = require('../../service_v2/order');
 const _ = require('lodash');
 
 function validateOrderItems(items, cb){

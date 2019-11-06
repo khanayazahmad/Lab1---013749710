@@ -1,4 +1,4 @@
-const menuService = require('../../service/menu');
+const menuService = require('../../service_v2/menu');
 const _ = require('lodash');
 const async = require('async');
 
@@ -58,6 +58,23 @@ module.exports.getMenu = function(request, response){
         return response.send({
             status: "ok",
             data: data
+        });
+
+    });
+}
+
+module.exports.getMenuByCat = function(request, response){
+    if(!(request.params && request.params.menuId && request.params.category)){
+        return response.status(400).send("INVALID REQUEST");
+    }
+    return menuService.getByMenuIdByCat(request.params.menuId, request.params.category, request.query.limit, request.query.offset, 
+        function(err, data){
+        if (err){
+            return response.status(err.code ? err.code : 500).send(err);
+        }
+        return response.send({
+            status: "ok",
+            items: data
         });
 
     });
