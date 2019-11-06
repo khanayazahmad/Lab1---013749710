@@ -6,7 +6,9 @@ import { Link } from 'react-router-dom';
 import { Button, Card, CardBody, CardFooter, Col, Container, Badge, Table, Row, CardHeader } from 'reactstrap';
 import restaurant from './Restaurant';
 
-import moment from 'moment-timezone';
+import Chat from '../chat/chatbox'
+
+import moment from 'moment';
 import _ from 'lodash';
 
 import { connect } from 'react-redux';
@@ -15,7 +17,8 @@ import PropTypes from 'prop-types';
 class Order extends Component {
 
     state = {
-        orders: null
+        orders: null,
+        chats:{}
     }
 
     static propTypes = {
@@ -31,11 +34,12 @@ class Order extends Component {
             }
         };
         if (token) {
-            config.headers['x-auth-token'] = token;
+            config.headers['Authorization'] = token;
         }
 
         return config;
     };
+
 
 
     getSingleOrderView = (order) => {
@@ -126,7 +130,29 @@ class Order extends Component {
                     </Row>
                 </CardBody>
                 <CardFooter>
-                    {(order.status == 'CANCELLED' || order.status == 'DELIVERED')?(<br/>):(<Button color='danger' block onClick={this.cancelOrder.bind(this, order.id)}>Cancel Order</Button>)}
+                    {(order.status == 'CANCELLED' || order.status == 'DELIVERED')?(<br/>):(
+                        <Row>
+                    <Col>
+                    {(!(this.state.chats[this.props.auth.user.id + "-" + order.restaurantId]))?(
+                        <Button color='primary' block onClick={this.openChat.bind(this,  order)}>Open Chat</Button>
+                        ):(
+                            <div>
+                        <Button color='primary' block onClick={this.closeChat.bind(this,  order)}>Close Chat</Button>
+                        <Chat
+                        key = {order.userId + "-" + order.restaurantId}
+                        title =  {order.data.restaurant}
+                        isOpen = {true}
+                        user = {this.props.auth.user}
+                        channel = {order.userId + "-" + order.restaurantId}
+                    /></div>
+                        )}
+                    
+                    </Col>
+                    <Col>
+                    <Button color='danger' block onClick={this.cancelOrder.bind(this, order.id)}>Cancel Order</Button>
+                    </Col>
+                    </Row>
+                    )}
                 </CardFooter>
             </Card>
         </Col>);
@@ -143,6 +169,21 @@ class Order extends Component {
             .catch(err => {
                 console.log(err);
             });
+    }
+
+    openChat = (order)=>{
+        var chats = this.state.chats;
+        chats[order.userId + "-" + order.restaurantId] = true
+        this.setState({
+            chats: chats
+        })
+    }
+    closeChat = (order)=>{
+        var chats = this.state.chats;
+        chats[order.userId + "-" + order.restaurantId] = false
+        this.setState({
+            chats: chats
+        })
     }
 
 

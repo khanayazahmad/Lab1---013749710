@@ -6,7 +6,8 @@ import { Link } from 'react-router-dom';
 import { Button, Card, CardBody, CardFooter, Col, Container, Badge, Table, Row, CardHeader } from 'reactstrap';
 import restaurant from './Restaurant';
 
-import moment from 'moment-timezone';
+import Chat from '../chat/chatbox'
+import moment from 'moment';
 import _ from 'lodash';
 
 import { connect } from 'react-redux';
@@ -15,7 +16,8 @@ import PropTypes from 'prop-types';
 class Order extends Component {
 
     state = {
-        orders: null
+        orders: null,
+        chats:{}
     }
 
     static propTypes = {
@@ -31,7 +33,7 @@ class Order extends Component {
             }
         };
         if (token) {
-            config.headers['x-auth-token'] = token;
+            config.headers['Authorization'] = token;
         }
 
         return config;
@@ -121,7 +123,7 @@ class Order extends Component {
                             <Row>
                                 <Table className="table table-hover">
                                     <thead>
-                                        <th className='text-right'><strong>{this.props.auth.user.name}</strong></th>
+                                        <th className='text-right'><strong>{order.data.user}</strong></th>
                                     </thead>
 
                                 </Table>
@@ -156,6 +158,22 @@ class Order extends Component {
                         </Row>
                         <Row>
                         <Col>
+                    {(!(this.state.chats[order.userId + "-" + order.restaurantId]))?(
+                        <Button color='primary' block onClick={this.openChat.bind(this,  order)}>Open Chat</Button>
+                        ):(
+                            <div>
+                        <Button color='primary' block onClick={this.closeChat.bind(this,  order)}>Close Chat</Button>
+                        <Chat
+                        key = {order.userId + "-" + order.restaurantId}
+                        title =  {order.data.user?order.data.user:"Anonymous"}
+                        isOpen = {true}
+                        user = {{name:order.data.restaurant}}
+                        channel = {order.userId + "-" + order.restaurantId}
+                    /></div>
+                        )}
+                    
+                    </Col>
+                        <Col>
                         <Button color='danger' block onClick={this.updateStatus.bind(this,order.id, order.restaurantId, 'CANCELLED')}>Cancel</Button>
                         </Col>
                         </Row>
@@ -166,6 +184,20 @@ class Order extends Component {
         </Col>);
     }
 
+    openChat = (order)=>{
+        var chats = this.state.chats;
+        chats[order.userId + "-" + order.restaurantId] = true
+        this.setState({
+            chats: chats
+        })
+    }
+    closeChat = (order)=>{
+        var chats = this.state.chats;
+        chats[order.userId + "-" + order.restaurantId] = false
+        this.setState({
+            chats: chats
+        })
+    }
 
     getOrderPageView = () => {
         //let orderGroups = this.state.orders.map(order => order.status);
