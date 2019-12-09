@@ -2,7 +2,7 @@
 
 const graphql = require('graphql');
 const { UserSchema } = require('../schemas/user');
-const userService = require('../../service_v2/users');
+const userService = require('../../../../grubhub/service_v2/users');
 const {
     GraphQLObjectType,
     GraphQLString,

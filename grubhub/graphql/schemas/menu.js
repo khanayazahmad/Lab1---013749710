@@ -1,6 +1,6 @@
 const graphql = require('graphql');
 const { GraphQLJSONObject }  = require('graphql-type-json');
-const menuService = require('../../service_v2/menu');
+const menuService = require('../../../../grubhub/service_v2/menu');
 const {
     GraphQLObjectType,
     GraphQLString,

@@ -1,15 +1,15 @@
 import React, { Component, Fragment } from 'react';
-import axios from 'axios'; import {API_PATH} from '../../config'
+import axios from 'axios'; import {API_PATH} from '../../../../../../grubhub/client/src/config'
 
 import { Link } from 'react-router-dom';
 import { MdAccountBalance, MdRestaurant } from "react-icons/md";
 
 import {IoIosArrowDropleftCircle, IoIosArrowDroprightCircle } from "react-icons/io";
 import { Button, Card, CardBody, CardImg, CardFooter, Col, Container, Form, Input, InputGroup, InputGroupAddon, InputGroupText, Row, CardHeader, Badge } from 'reactstrap';
-import AddItem from './AddItem';
-import EditItem from './EditItem';
+import AddItem from '../../../../../../grubhub/client/src/components/owner/AddItem';
+import EditItem from '../../../../../../grubhub/client/src/components/owner/EditItem';
 import { graphql, compose } from 'react-apollo';
-import { ADD_ITEM_MUTATION } from '../../queries'
+import { ADD_ITEM_MUTATION } from '../../../../../../grubhub/client/src/queries'
 class Menu extends Component {
     state = {
         edit: [],

@@ -1,6 +1,6 @@
 const graphql = require('graphql');
 const { ItemSchema } = require('../schemas/menu');
-const menuService = require('../../service_v2/menu');
+const menuService = require('../../../../grubhub/service_v2/menu');
 const { GraphQLJSONObject }  = require('graphql-type-json');
 const {
     GraphQLObjectType,

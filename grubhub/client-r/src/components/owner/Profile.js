@@ -1,15 +1,15 @@
 import React, { Component } from 'react';
 import { Link, Redirect } from 'react-router-dom';
-import axios from 'axios'; import {API_PATH} from '../../config'
+import axios from 'axios'; import {API_PATH} from '../../../../../../grubhub/client/src/config'
 import { Button, Card, CardBody, CardImg, Badge, CardFooter, Col, Container, Form, Input, InputGroup, InputGroupAddon, InputGroupText, Row, CardHeader } from 'reactstrap';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import store from '../../store';
-import { register, loadUser } from '../../actions/authActions';
-import { clearErrors } from '../../actions/errorActions';
+import store from '../../../../../../grubhub/client/src/store';
+import { register, loadUser } from '../../../../../../grubhub/client/src/actions/authActions';
+import { clearErrors } from '../../../../../../grubhub/client/src/actions/errorActions';
 import { MdAccountBalance, MdRestaurant, MdImage, MdEmail} from "react-icons/md";
 import { graphql, compose } from 'react-apollo';
-import { UPDATE_USER, GET_USER } from '../../queries'
+import { UPDATE_USER, GET_USER } from '../../../../../../grubhub/client/src/queries'
 import { FiCheckCircle } from "react-icons/fi";
 class Profile extends Component {
     state = {
