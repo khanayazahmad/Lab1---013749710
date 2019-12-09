@@ -3,10 +3,17 @@ import { Provider } from 'react-redux';
 import store from './store';
 import { loadUser } from './actions/authActions';
 
+import ApolloClient from 'apollo-boost';
+import { ApolloProvider } from 'react-apollo';
+
 import {BrowserRouter} from 'react-router-dom';
 import Router from './Router';
-import axios from 'axios';
+import axios from 'axios'; import {API_PATH} from './config'
 import 'bootstrap/dist/css/bootstrap.min.css';
+
+const client = new ApolloClient({
+  uri: 'http://localhost:8080/graphql'
+});
 
 class App extends Component {
   componentDidMount() {
@@ -14,7 +21,9 @@ class App extends Component {
   }
 
   render() {
+       
     return (
+      <ApolloProvider client={client}>
       <Provider store={store}>
         <div className='App' style={{"paddingTop": "52px"}}>
         <BrowserRouter>
@@ -24,6 +33,7 @@ class App extends Component {
       </BrowserRouter>
         </div>
       </Provider>
+      </ApolloProvider>
     );
   }
 }

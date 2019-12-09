@@ -22,7 +22,12 @@
     "reactstrap": "^7.1.0",
     "redux": "^4.0.1",
     "redux-thunk": "^2.3.0",
-    "uuid": "^3.3.2"
+    "uuid": "^3.3.2",
+    "react-chat-window": "^1.2.1",
+    "apollo-boost": "^0.1.22",
+    "graphql": "^14.0.2",
+    "react-apollo": "^2.3.2",
+    "socket.io-client": "^2.3.0"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -38,6 +43,5 @@
     "not dead",
     "not ie <= 11",
     "not op_mini all"
-  ],
-  "proxy": "http://localhost:8080"
+  ]
 }

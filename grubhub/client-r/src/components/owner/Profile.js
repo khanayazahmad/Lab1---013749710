@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link, Redirect } from 'react-router-dom';
-import axios from 'axios';
+import axios from 'axios'; import {API_PATH} from '../../config'
 import { Button, Card, CardBody, CardImg, Badge, CardFooter, Col, Container, Form, Input, InputGroup, InputGroupAddon, InputGroupText, Row, CardHeader } from 'reactstrap';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -8,20 +8,18 @@ import store from '../../store';
 import { register, loadUser } from '../../actions/authActions';
 import { clearErrors } from '../../actions/errorActions';
 import { MdAccountBalance, MdRestaurant, MdImage, MdEmail} from "react-icons/md";
-
+import { graphql, compose } from 'react-apollo';
+import { UPDATE_USER, GET_USER } from '../../queries'
 import { FiCheckCircle } from "react-icons/fi";
 class Profile extends Component {
     state = {
-        user:this.props.auth.user,
+        user:this.props.getUser.user,
         edit: false,
         name: '',
         email: '',
         selectedFile: null
     };
 
-    static propTypes = {
-        auth: PropTypes.object.isRequired
-    };
 
     onChange = e => {
         this.setState({ [e.target.name]: e.target.value });
@@ -57,7 +55,7 @@ class Profile extends Component {
                             <h4>{this.state.user.name}</h4>
                         </Col>
                         <Col className="text-right">
-                            <h4><Badge color="success">OWNER</Badge></h4>
+                            <h4><Badge color="success">CUSTOMER</Badge></h4>
                         </Col>
                     </Row>
                 </CardHeader>
@@ -109,7 +107,7 @@ class Profile extends Component {
         const data = new FormData();
         if (this.state.selectedFile) {
             data.append('image', this.state.selectedFile, this.state.selectedFile.name);
-            axios.post('/img-upload', data, {
+            axios.post(API_PATH+ '/img-upload', data, {
                 headers: {
                     'accept': 'application/json',
                     'Accept-Language': 'en-US,en;q=0.8',
@@ -119,49 +117,20 @@ class Profile extends Component {
             })
                 .then((response) => {
 
-                    newUser.data = {
-                        img: response.data.location
-                    }
+                    this.props.updateUser({
+                        variables: newUser,
+                        refetchQueries: [{query: GET_USER}]
+                    })
 
-                    axios
-                        .post('/user/update',newUser, this.tokenConfig())
-                        .then(res => {
-                            if (res.data.data.user) {
-                                alert("Profile updated successfully");
-                                store.dispatch(loadUser());
-                                this.setState({
-                                    edit:false,
-                                    user:res.data.data.user
-                                });
-                            }
-
-                        })
-                        .catch(err => {
-                            console.log(err);
-                        });
                 }).catch(err => {
                     console.log(err);
                 });
         }else{
 
-            newUser.data = this.state.user.data;
-            console.log(newUser)
-            axios
-                .post('/user/update',newUser, this.tokenConfig())
-                .then(res => {
-                    if (res.data.data.user) {
-                        alert("Profile updated successfully");
-                                store.dispatch(loadUser());
-                                this.setState({
-                                    edit:false,
-                                    user:res.data.data.user
-                                });
-                    }
-
-                })
-                .catch(err => {
-                    console.log(err);
-                });
+            this.props.updateUser({
+                variables: newUser,
+                refetchQueries: [{query: GET_USER}]
+            })
 
         }
     };
@@ -245,13 +214,13 @@ class Profile extends Component {
     }
 }
 
-const mapStateToProps = state => {
-    return {
-        auth: state.auth
-    }
-}
-
-export default connect(
-    mapStateToProps,
-    { register, clearErrors }
-)(Profile);
+export default compose(
+    graphql(UPDATE_USER, { name: "updateUser" }),
+    graphql(GET_USER, { name: "getUser", options:(props)=>{
+        return {
+            variables: {
+                id: localStorage.getItem("id")
+            }
+        }
+    } })
+  )(Profile);

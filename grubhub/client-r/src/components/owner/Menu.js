@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import axios from 'axios';
+import axios from 'axios'; import {API_PATH} from '../../config'
 
 import { Link } from 'react-router-dom';
 import { MdAccountBalance, MdRestaurant } from "react-icons/md";
@@ -8,6 +8,8 @@ import {IoIosArrowDropleftCircle, IoIosArrowDroprightCircle } from "react-icons/
 import { Button, Card, CardBody, CardImg, CardFooter, Col, Container, Form, Input, InputGroup, InputGroupAddon, InputGroupText, Row, CardHeader, Badge } from 'reactstrap';
 import AddItem from './AddItem';
 import EditItem from './EditItem';
+import { graphql, compose } from 'react-apollo';
+import { ADD_ITEM_MUTATION } from '../../queries'
 class Menu extends Component {
     state = {
         edit: [],
@@ -42,7 +44,7 @@ class Menu extends Component {
 
     getPrev = (cat) => {
         axios
-            .get(`/menu/${this.state.menu.id}/getByCat/${cat}?limit=3&offset=${(this.state.offset[cat] - this.state.limit)>=0?(this.state.offset[cat] - this.state.limit):0}`, this.tokenConfig())
+            .get(API_PATH+`/menu/${this.state.menu.id}/getByCat/${cat}?limit=3&offset=${(this.state.offset[cat] - this.state.limit)>=0?(this.state.offset[cat] - this.state.limit):0}`, this.tokenConfig())
             .then(res => {
                 if (res.data.items) {
                     var offset = this.state.offset;
@@ -65,7 +67,7 @@ class Menu extends Component {
     getNext = (cat) => {
         console.log(this.state.menu)
         axios
-            .get(`/menu/${this.state.menu.id}/getByCat/${cat}?limit=3&offset=${this.state.offset[cat]+ this.state.limit}`, this.tokenConfig())
+            .get(API_PATH+`/menu/${this.state.menu.id}/getByCat/${cat}?limit=3&offset=${this.state.offset[cat]+ this.state.limit}`, this.tokenConfig())
             .then(res => {
                 if (res.data.items) {
                     var offset = this.state.offset;
@@ -87,7 +89,7 @@ class Menu extends Component {
     
     deleteItem = (id) => {
         axios
-            .get('/menu/deleteItem/' + id, this.tokenConfig())
+            .get(API_PATH+ '/menu/deleteItem/' + id, this.tokenConfig())
             .then(res => {
                 if (res.data.menu) {
                     this.setState({
@@ -105,7 +107,7 @@ class Menu extends Component {
         let updatedEdit = this.state.edit.filter(id => id != body.where.id);
         console.log(updatedEdit);
         axios
-            .post('/menu/updateItem', body, this.tokenConfig())
+            .post(API_PATH+ '/menu/updateItem', body, this.tokenConfig())
             .then(res => {
                 if (res.data.menu) {
                     this.setState({
@@ -127,7 +129,7 @@ class Menu extends Component {
     addItem = (newItem) => {
 
         axios
-            .post('/menu/addItem', {
+            .post(API_PATH+ '/menu/addItem', {
                 menuId: this.state.menu.id,
 
                 name: newItem.name,
@@ -251,7 +253,7 @@ class Menu extends Component {
     componentDidMount = () => {
         if (this.props.restaurant) {
             axios
-                .get('/menu/getByRestaurant/' + this.props.restaurant.id, this.tokenConfig())
+                .get(API_PATH+ '/menu/getByRestaurant/' + this.props.restaurant.id, this.tokenConfig())
                 .then(res => {
                     if (res.data.menu) {
                         var os = {};
@@ -263,7 +265,7 @@ class Menu extends Component {
                             offset: os
                         })
                     } else {
-                        axios.post('/menu/create/' + this.props.restaurant.id, {}, this.tokenConfig())
+                        axios.post(API_PATH+ '/menu/create/' + this.props.restaurant.id, {}, this.tokenConfig())
                             .then(res => {
                                 if (res.data.menu) {
                                     this.setState({
@@ -329,4 +331,6 @@ class Menu extends Component {
 
 }
 
-export default Menu;
+export default compose(
+    graphql(ADD_ITEM_MUTATION, { name: "addItem" })
+  )(Menu);

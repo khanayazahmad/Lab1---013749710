@@ -6,6 +6,8 @@ import PropTypes from 'prop-types';
 import { register } from '../../actions/authActions';
 import { clearErrors } from '../../actions/errorActions';
 import { MdAccountBalance, MdRestaurant, MdImage,  } from "react-icons/md";
+import { graphql, compose } from 'react-apollo';
+import { REGISTER_USER_MUTATION } from '../../queries'
 
 import { FiCheckCircle  } from "react-icons/fi";
 class RegisterModal extends Component {
@@ -18,25 +20,14 @@ class RegisterModal extends Component {
     msg: null
   };
 
-  static propTypes = {
-    isAuthenticated: PropTypes.bool,
-    error: PropTypes.object.isRequired,
-    register: PropTypes.func.isRequired,
-    clearErrors: PropTypes.func.isRequired
-  };
+
 
   componentDidUpdate(prevProps) {
-    const { error, isAuthenticated, auth } = this.props;
-    if (error !== prevProps.error) {
+    const { REGISTER_USER_MUTATION } = this.props;
+    console.log(REGISTER_USER_MUTATION)
 
-      if (error.id === 'REGISTER_FAIL') {
-        alert("Invalid entries! Please try again");
-        this.setState({ msg: error.msg });
-      } else {
-        this.setState({ msg: auth && auth.message ? auth.message : null, modal:true });
 
-      }
-    }
+
   }
 
 
@@ -57,8 +48,10 @@ class RegisterModal extends Component {
       role: this.props.role,
       password,
     };
-    
-    this.props.register(newUser);
+    console.log(newUser);
+    this.props.REGISTER_USER_MUTATION({
+      variables: newUser
+    })
   };
 
   render() {
@@ -172,13 +165,6 @@ class RegisterModal extends Component {
   }
 }
 
-const mapStateToProps = state => ({
-  auth: state.auth,
-  isAuthenticated: state.auth.isAuthenticated,
-  error: state.error
-});
-
-export default connect(
-  mapStateToProps,
-  { register, clearErrors }
+export default compose(
+  graphql(REGISTER_USER_MUTATION, { name: "REGISTER_USER_MUTATION" })
 )(RegisterModal);
